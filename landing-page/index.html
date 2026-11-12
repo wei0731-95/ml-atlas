@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ML Atlas|機器學習模型圖鑑</title>
+<meta name="description" content="ML Atlas 是一本可以動手玩的機器學習模型圖鑑 App,用動畫理解 16 個經典模型。">
+<style>
+  :root {
+    /* 色彩:深紫主色、淡米色底、金色點綴 */
+    --bg: #f5f1e8;
+    --surface: #ffffff;
+    --surface-2: #ece5d6;
+    --text: #1d1530;
+    --muted: #6a6078;
+    --line: rgba(160, 122, 68, .28);
+    --brand-a: #2e1a52;
+    --brand-b: #6b4ba6;
+    --accent: #4a2c7a;
+    --gold: #a07a44;
+    --shadow: 0 18px 50px rgba(46, 26, 82, .16);
+    --serif: "New York", ui-serif, "Iowan Old Style", Georgia, "Songti TC", "Noto Serif TC", serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #120d1c; --surface: #1e1730; --surface-2: #2a2140; --text: #f3eefc; --muted: #b3a8c9;
+    --line: rgba(212, 180, 131, .22); --brand-a: #4a3180; --brand-b: #8a68c9; --accent: #c4aeea; --gold: #d4b483;
+    --shadow: 0 18px 50px rgba(0, 0, 0, .5);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #120d1c; --surface: #1e1730; --surface-2: #2a2140; --text: #f3eefc; --muted: #b3a8c9;
+    --line: rgba(212, 180, 131, .22); --brand-a: #4a3180; --brand-b: #8a68c9; --accent: #c4aeea; --gold: #d4b483;
+    --shadow: 0 18px 50px rgba(0, 0, 0, .5);
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+    line-height: 1.65; -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 20px; }
+  .grad { background: linear-gradient(135deg, var(--brand-a), var(--brand-b)); }
+  .grad-text { background: linear-gradient(135deg, var(--brand-a), var(--brand-b)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+  /* 導覽列 */
+  header { position: sticky; top: 0; z-index: 10; backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+           background: color-mix(in srgb, var(--bg) 78%, transparent); border-bottom: 1px solid var(--line); }
+  nav { display: flex; align-items: center; gap: 18px; height: 60px; }
+  .logo { display: flex; align-items: center; gap: 10px; font-family: var(--serif); font-weight: 600; font-size: 18px; letter-spacing: .12em; text-decoration: none; }
+  .logo-mark { width: 32px; height: 32px; border-radius: 9px; display: grid; place-items: center; }
+  .logo-mark svg { width: 20px; height: 20px; }
+  nav .links { margin-left: auto; display: flex; gap: 18px; font-size: 14px; }
+  nav .links a { text-decoration: none; color: var(--muted); }
+  nav .links a:hover { color: var(--text); }
+  .theme-btn { border: 1px solid var(--line); background: var(--surface); color: var(--text); border-radius: 999px;
+               padding: 7px 12px; font-size: 13px; cursor: pointer; white-space: nowrap; }
+
+  /* Hero */
+  .hero { display: grid; grid-template-columns: 1.1fr .9fr; gap: 40px; align-items: center; padding: 64px 0 56px; }
+  .badge { display: inline-block; font-size: 13px; font-weight: 600; color: var(--accent);
+           border: 1px solid var(--line); padding: 5px 12px; border-radius: 999px; }
+  h1 { font-family: var(--serif); font-weight: 600; font-size: clamp(34px, 6vw, 56px); line-height: 1.18; margin: 18px 0 14px; text-wrap: balance; }
+  .slash { color: var(--gold); font-weight: 200; margin-right: .12em; }
+  .eyebrow { font-size: 12px; font-weight: 600; letter-spacing: .32em; text-transform: uppercase; color: var(--gold); }
+  .lead { font-size: clamp(16px, 2.2vw, 19px); color: var(--muted); margin: 0 0 26px; max-width: 34em; }
+  .cta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+  .btn { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; font-weight: 600; border-radius: 999px;
+         padding: 13px 20px; border: 0; cursor: pointer; font-size: 16px; transition: transform .15s ease; }
+  .btn:hover { transform: translateY(-2px); }
+  .btn-primary { color: #fff; box-shadow: var(--shadow); }
+  .btn-ghost { background: var(--surface); color: var(--text); border: 1px solid var(--line); }
+  .note { font-size: 13px; color: var(--muted); margin-top: 12px; }
+  .stats { display: flex; gap: 28px; margin-top: 30px; flex-wrap: wrap; }
+  .stats { border-top: 1px solid var(--line); padding-top: 20px; }
+  .stats b { display: block; font-family: var(--serif); font-weight: 400; font-size: 30px; color: var(--gold); font-variant-numeric: tabular-nums; }
+  .stats span { font-size: 13px; color: var(--muted); }
+
+  /* 手機 mock-up(純 CSS) */
+  .phone-stage { display: grid; place-items: center; position: relative; }
+  .phone-stage::before { content: ""; position: absolute; width: 92%; max-width: 420px; aspect-ratio: 1; border-radius: 50%;
+                         border: 2px dotted var(--gold); opacity: .7; }
+  .phone-stage::after { content: ""; position: absolute; width: 62%; max-width: 290px; aspect-ratio: 1; border-radius: 50%;
+                        background: linear-gradient(135deg, var(--brand-a), var(--brand-b)); filter: blur(60px); opacity: .28; z-index: 0; }
+  .phone { z-index: 1; }
+  .phone { position: relative; width: min(300px, 78vw); aspect-ratio: 9 / 19; border-radius: 46px; padding: 10px;
+           background: #0b0a17; box-shadow: var(--shadow), inset 0 0 0 2px #2b2850; }
+  .screen { height: 100%; border-radius: 37px; overflow: hidden; background: var(--bg); position: relative;
+            display: flex; flex-direction: column; padding: 44px 14px 0; text-align: left; }
+  .island { position: absolute; top: 12px; left: 50%; translate: -50% 0; width: 86px; height: 24px; border-radius: 99px; background: #0b0a17; }
+  .s-title { font-family: var(--serif); font-weight: 700; font-size: 20px; margin-bottom: 8px; }
+  .s-card { border-radius: 18px; padding: 14px; color: #fff; font-size: 11px; line-height: 1.45; }
+  .s-card b { display: block; font-family: var(--serif); font-size: 14px; letter-spacing: .12em; margin-bottom: 2px; }
+  .s-demo { margin-top: 10px; background: var(--surface); border-radius: 16px; padding: 10px; box-shadow: 0 6px 18px rgba(0,0,0,.08); }
+  .s-demo small { font-weight: 700; color: var(--accent); font-size: 10px; }
+  .s-demo svg { display: block; width: 100%; height: auto; }
+  .s-row { display: flex; align-items: center; gap: 9px; background: var(--surface); border-radius: 13px; padding: 8px 10px; margin-top: 8px; font-size: 11px; }
+  .s-row i { width: 26px; height: 26px; border-radius: 8px; flex: none; }
+  .s-row b { display: block; font-size: 12px; }
+  .s-row span { color: var(--muted); }
+  .s-tab { margin: auto 4px 10px; background: color-mix(in srgb, var(--surface) 86%, transparent); border: 1px solid var(--line);
+           border-radius: 99px; display: flex; justify-content: space-around; padding: 8px 6px; font-size: 9px; color: var(--muted); }
+  .s-tab span:first-child { color: var(--accent); font-weight: 700; }
+  .pulse { animation: pulse 2.4s ease-in-out infinite; }
+  .p2 { animation-delay: .5s; } .p3 { animation-delay: 1s; }
+  @keyframes pulse { 0%, 100% { opacity: .35; } 50% { opacity: 1; } }
+  .signal { animation: travel 2.4s linear infinite; }
+  @keyframes travel { from { transform: translateX(0); } to { transform: translateX(150px); } }
+
+  /* 區塊 */
+  section { padding: 56px 0; }
+  h2 { font-family: var(--serif); font-weight: 600; font-size: clamp(24px, 4vw, 34px); margin: 0 0 8px; text-wrap: balance; }
+  /* 數字標號:01 ── ENGLISH */
+  .num { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; font-size: 12px; font-weight: 600; letter-spacing: .28em; text-transform: uppercase; color: var(--muted); }
+  .num b { font-family: var(--serif); font-weight: 300; font-size: 30px; letter-spacing: 0; color: var(--gold); }
+  .num i { width: 34px; height: 1px; background: var(--gold); }
+  .sub { color: var(--muted); margin: 0 0 28px; max-width: 40em; }
+  .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+  .feature { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 24px; transition: transform .2s ease, box-shadow .2s ease; }
+  .feature:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
+  .icon { font-family: var(--serif); font-weight: 300; font-size: 30px; color: var(--gold); margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid var(--line); }
+  .feature h3 { margin: 0 0 6px; font-family: var(--serif); font-size: 18px; }
+  .feature p { margin: 0; color: var(--muted); font-size: 15px; }
+
+  .cats { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+  .cat { border-radius: 16px; padding: 20px; background: var(--surface); border: 1px solid var(--line); border-top: 3px solid var(--c); }
+  .cat h3 { margin: 0 0 2px; font-family: var(--serif); font-size: 18px; }
+  .cat em { font-style: normal; font-size: 11px; letter-spacing: .24em; text-transform: uppercase; color: var(--gold); }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+  .chips span { font-size: 12.5px; padding: 4px 10px; border-radius: 99px; background: var(--surface-2); }
+
+  .download { text-align: center; border-radius: 20px; color: #fff; padding: 56px 22px; box-shadow: var(--shadow); }
+  .download .eyebrow { color: #e2c692; }
+  .download h2 { color: #fff; }
+  .download p { margin: 0 auto 24px; max-width: 34em; opacity: .92; }
+  .btn-light { background: #f5f1e8; color: #2e1a52; }
+  footer { padding: 30px 0 46px; color: var(--muted); font-size: 13px; text-align: center; }
+
+  .reveal { opacity: 0; transform: translateY(18px); transition: opacity .6s ease, transform .6s ease; }
+  .reveal.in { opacity: 1; transform: none; }
+
+  @media (max-width: 820px) {
+    .hero { grid-template-columns: 1fr; padding-top: 40px; text-align: center; }
+    .lead { margin-inline: auto; }
+    .cta, .stats { justify-content: center; }
+    nav .links a { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .pulse, .signal { animation: none; }
+    .reveal { opacity: 1; transform: none; transition: none; }
+    html { scroll-behavior: auto; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <nav class="wrap">
+    <a class="logo" href="#top">
+      <span class="logo-mark grad" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="1.4">
+          <path d="M4 8 12 5M4 8l8 4M4 8l8 11M4 16l8-11M4 16l8-4M4 16l8 3M12 5l8 3M12 5l8 8M12 12l8-4M12 12l8 4M12 19l8-11M12 19l8-3"/>
+          <g fill="#fff" stroke="none"><circle cx="4" cy="8" r="2.3"/><circle cx="4" cy="16" r="2.3"/><circle cx="12" cy="5" r="2.3"/><circle cx="12" cy="12" r="2.3"/><circle cx="12" cy="19" r="2.3"/><circle cx="20" cy="8" r="2.3"/><circle cx="20" cy="16" r="2.3"/></g>
+        </svg>
+      </span>
+      ML Atlas
+    </a>
+    <div class="links">
+      <a href="#features">功能亮點</a>
+      <a href="#models">收錄模型</a>
+      <a href="#download">下載</a>
+    </div>
+    <button class="theme-btn" id="themeBtn" type="button" aria-label="切換深色或淺色模式">🌗 外觀</button>
+  </nav>
+</header>
+
+<main id="top">
+  <div class="wrap hero">
+    <div>
+      <div class="eyebrow">Machine Learning Field Guide</div>
+      <h1><span class="slash">/</span>ML ATLAS<br>用<span class="grad-text">動畫</span>讀懂機器學習</h1>
+      <span class="badge">iOS 26 · iPhone &amp; iPad · SwiftUI</span>
+      <p class="lead" style="margin-top:18px">ML Atlas 是一本可以動手玩的機器學習模型圖鑑。從線性迴歸到 Transformer,每個模型都有專屬的互動動畫、中英對照說明與延伸閱讀。</p>
+      <div class="cta">
+        <a class="btn btn-primary grad" href="#download"> 下載 App</a>
+        <a class="btn btn-ghost" href="#features">看看有什麼</a>
+      </div>
+      <p class="note">※ 下載按鈕為課程作業示意(placeholder),尚未上架 App Store。</p>
+      <div class="stats">
+        <div><b data-count="16">16</b><span>個經典模型</span></div>
+        <div><b data-count="4">4</b><span>大學習類型</span></div>
+        <div><b data-count="16">16</b><span>段專屬動畫</span></div>
+      </div>
+    </div>
+
+    <!-- 手機畫面示意:完全用 CSS / SVG 繪製 -->
+    <div class="phone-stage" aria-hidden="true">
+      <div class="phone">
+        <div class="screen">
+          <div class="island"></div>
+          <div class="s-title">ML Atlas</div>
+          <div class="s-card grad"><b>MACHINE LEARNING</b>不直接寫下規則,而是讓電腦從資料中找出規律。</div>
+          <div class="s-demo">
+            <small>▶ 動畫示意 Neural Network</small>
+            <svg viewBox="0 0 220 96">
+              <g stroke="currentColor" stroke-opacity=".18">
+                <path d="M30 24 105 14M30 24l75 34M30 24l75 58M30 72l75-58M30 72l75-14M30 72l75 10M105 14l85 20M105 14l85 42M105 48l85-14M105 48l85 14M105 82l85-48M105 82l85-20"/>
+              </g>
+              <circle class="signal" cx="30" cy="48" r="3" fill="#8a68c9"/>
+              <g fill="#8a68c9">
+                <circle class="pulse" cx="30" cy="24" r="8"/><circle class="pulse" cx="30" cy="72" r="8"/>
+                <circle class="pulse p2" cx="105" cy="14" r="8"/><circle class="pulse p2" cx="105" cy="48" r="8"/><circle class="pulse p2" cx="105" cy="82" r="8"/>
+                <circle class="pulse p3" cx="190" cy="34" r="8"/><circle class="pulse p3" cx="190" cy="62" r="8"/>
+              </g>
+            </svg>
+          </div>
+          <div class="s-row"><i style="background:#553894"></i><div><b>Linear Regression</b><span>線性迴歸</span></div></div>
+          <div class="s-row"><i style="background:#2e7579"></i><div><b>K-Means</b><span>K 平均分群</span></div></div>
+          <div class="s-row"><i style="background:#944775"></i><div><b>Transformer</b><span>變換器模型</span></div></div>
+          <div class="s-tab"><span>圖鑑</span><span>探索</span><span>實驗室</span><span>關於</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section id="features">
+    <div class="wrap">
+      <div class="num reveal"><b>01</b><i></i>Features</div>
+      <h2 class="reveal">功能亮點</h2>
+      <p class="sub reveal">不只是讀文字 —— 每一頁都能滑、能點、能玩。</p>
+      <div class="features">
+        <article class="feature reveal"><div class="icon">01</div><h3>每個模型都有專屬動畫</h3><p>看 K-Means 的中心點怎麼移動、回歸線怎麼擬合、決策樹怎麼分裂,訊號如何在神經網路中傳遞。</p></article>
+        <article class="feature reveal"><div class="icon">02</div><h3>可以動手的互動示範</h3><p>在 KNN 畫面上點一下放置新資料,調整 k 值,立刻看到最近的鄰居與投票結果。</p></article>
+        <article class="feature reveal"><div class="icon">03</div><h3>中英雙語對照</h3><p>專有名詞保留英文、說明用繁體中文;概念、原理、應用三頁左右滑動就能讀完。</p></article>
+        <article class="feature reveal"><div class="icon">04</div><h3>卡片牆與比較表</h3><p>用卡片牆瀏覽全部模型,或在比較表中一次比較可解釋性、訓練成本與典型用途。</p></article>
+        <article class="feature reveal"><div class="icon">05</div><h3>收藏與延伸閱讀</h3><p>把想複習的模型加入收藏,並在 App 內直接閱讀 Wikipedia 與 scikit-learn 文件。</p></article>
+        <article class="feature reveal"><div class="icon">06</div><h3>深色模式與 iPad 支援</h3><p>淺色、深色都精心調整;在 iPad 上分頁列移到上方,還能展開成側邊欄。</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section id="models">
+    <div class="wrap">
+      <div class="num reveal"><b>02</b><i></i>Models</div>
+      <h2 class="reveal">收錄模型</h2>
+      <p class="sub reveal">涵蓋四大類型、共 16 個經典模型。</p>
+      <div class="cats">
+        <div class="cat reveal" style="--c:#553894"><h3>監督式學習</h3><em>Supervised</em>
+          <div class="chips"><span>Linear Regression</span><span>Logistic Regression</span><span>Decision Tree</span><span>Random Forest</span><span>SVM</span><span>KNN</span></div></div>
+        <div class="cat reveal" style="--c:#2e7579"><h3>非監督式學習</h3><em>Unsupervised</em>
+          <div class="chips"><span>K-Means</span><span>DBSCAN</span><span>PCA</span></div></div>
+        <div class="cat reveal" style="--c:#944775"><h3>深度學習</h3><em>Deep Learning</em>
+          <div class="chips"><span>MLP</span><span>CNN</span><span>RNN / LSTM</span><span>Transformer</span><span>GAN</span></div></div>
+        <div class="cat reveal" style="--c:#a87338"><h3>強化學習</h3><em>Reinforcement</em>
+          <div class="chips"><span>Q-Learning</span><span>DQN</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="download">
+    <div class="wrap">
+      <div class="download grad reveal">
+        <div class="eyebrow">03 — Download</div>
+        <h2 style="margin-top:10px">把機器學習圖鑑放進口袋</h2>
+        <p>支援 iOS 26 以上的 iPhone 與 iPad。目前為課程作業版本,下載連結為示意。</p>
+        <a class="btn btn-light" href="#download" id="downloadBtn"> Download on the App Store</a>
+        <p class="note" id="downloadNote" style="color:#fff;opacity:.85" role="status"></p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">ML Atlas|機器學習模型圖鑑 · SwiftUI 課程作業 #88 · 內容參考 Wikipedia 與 scikit-learn 文件</div>
+</footer>
+
+<script>
+  // 外觀切換:預設跟隨系統,按一下在淺色 / 深色之間切換
+  const root = document.documentElement;
+  document.getElementById('themeBtn').addEventListener('click', () => {
+    const systemDark = matchMedia('(prefers-color-scheme: dark)').matches;
+    const current = root.dataset.theme || (systemDark ? 'dark' : 'light');
+    root.dataset.theme = current === 'dark' ? 'light' : 'dark';
+  });
+
+  // 下載按鈕(placeholder)
+  document.getElementById('downloadBtn').addEventListener('click', (event) => {
+    event.preventDefault();
+    document.getElementById('downloadNote').textContent = '這是作業示意按鈕,App 尚未上架。';
+  });
+
+  // 捲動時淡入
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) { entry.target.classList.add('in'); observer.unobserve(entry.target); }
+    });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach((element, index) => {
+    element.style.transitionDelay = (index % 6) * 60 + 'ms';
+    observer.observe(element);
+  });
+</script>
+</body>
+</html>
